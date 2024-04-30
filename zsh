@@ -1,47 +1,52 @@
-export ZSH="$HOME/.oh-my-zsh"
-export PATH=/home/parth/.local/bin:$PATH
-PATH=~/spotify:$PATH
+unbind C-b
+set-option -g prefix C-Space
+set-option -g status-position top
+bind-key C-Space send-prefix
 
+set -g mouse on
+set -g set-clipboard on
+set -g renumber-windows on
+set -g detach-on-destroy on
+set -g base-index 1
 
-ZSH_THEME="robbyrussell"
-plugins=(git zsh-autosuggestions)
-source $ZSH/oh-my-zsh.sh
+unbind '"'
+unbind %
+bind - split-window -h -c "#{pane_current_path}"
+bind = split-window -v -c "#{pane_current_path}"
 
-alias e="nvim ."
-alias c="clear"
+bind -n C-h select-pane -L
+bind -n C-k select-pane -U
+bind -n C-l select-pane -R
+bind -n C-j select-pane -D
 
-alias cat="bat"
-alias ls="exa"
+bind C-j display-popup -E "tmux list-sessions | sed -E 's/:.*$//' | grep -v \"^$(tmux display-message -p '#S')\$\" | fzf --reverse | xargs tmux switch-client -t"
 
-alias yarn="bun"
-alias pnpm="bun"
-alias npm="bun"
-alias npx="bunx"
-alias ni="bun install"
+bind-key r source-file ~/.tmux.conf \; display-message "~/.tmux.conf reloaded"
 
-alias q="exit"
-alias ta="tmux attach -t"
-alias tn="tmux new -s"
-alias tmls="tmux ls"
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'niksingh710/minimal-tmux-status'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
 
-export LC_ALL=en_US.UTF-8
-export LANG=en_us.UTF-8
-source ~/.cargo/env
+set -g @continuum-restore 'on'
 
-export PATH=/Users/parthjadhav/.local/bin:$PATH
-export PATH=$PATH:/Users/parthjadhav/.npm-global/bin
+set -g @minimal-tmux-bg "#698DDA"
+set -g @minimal-tmux-justify "centre"
+set -g @minimal-tmux-indicator-str "  tmux  "
+set -g @minimal-tmux-indicator true
+set -g @minimal-tmux-status "top"
+bind-key h set-option status
 
-# pnpm
-export PNPM_HOME="/Users/parthjadhav/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+# Enables or disables the left and right status bar
+set -g @minimal-tmux-right false
+set -g @minimal-tmux-left false
 
-# bun completions
-[ -s "/Users/parthjadhav/.bun/_bun" ] && source "/Users/parthjadhav/.bun/_bun"
+# expanded icon (fullscreen icon) 
+set -g @minimal-tmux-expanded-icon " 󰊓 "
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+#on all tabs (default is false)
+# false will make it visible for the current tab only
+set -g @minimal-tmux-show-expanded-icons-for-all-tabs true
+
+run '~/.tmux/plugins/tpm/tpm'
