@@ -64,26 +64,30 @@ install_additional_tools() {
 }
 
 # Check OS and execute appropriate functions
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    ask_password
-    install_brew_mac
-    install_packages_mac
-    setup_zsh
-    setup_configs
-    install_rust
-    install_node
-    install_additional_tools
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    ask_password
-    install_packages_ubuntu
-    setup_zsh
-    setup_configs
-    install_rust
-    install_node
-    install_additional_tools
-else
-    echo "Unsupported OS: $OSTYPE"
-    exit 1
-fi
+case "$(uname -s)" in
+    Darwin*)
+        ask_password
+        install_brew_mac
+        install_packages_mac
+        setup_zsh
+        setup_configs
+        install_rust
+        install_node
+        install_additional_tools
+        ;;
+    Linux*)
+        ask_password
+        install_packages_ubuntu
+        setup_zsh
+        setup_configs
+        install_rust
+        install_node
+        install_additional_tools
+        ;;
+    *)
+        echo "Unsupported OS: $(uname -s)"
+        exit 1
+        ;;
+esac
 
 echo "Development environment setup completed."
