@@ -3,7 +3,7 @@
 # Function to ask for password and use it throughout the script
 ask_password() {
     echo "Please enter your password:"
-    read -s PASSWORD
+    read PASSWORD
     export PASSWORD
 }
 
@@ -14,16 +14,28 @@ install_brew_mac() {
 
 # Function to install required packages on macOS
 install_packages_mac() {
-    brew install git zsh neovim ripgrep alacritty tmux bat fzf
+    brew install git neovim ripgrep alacritty tmux bat fzf
     brew tap homebrew/cask-fonts && brew install --cask font-fira-code-nerd-font
     brew install bun
     npm install --global yarn
 }
 
+install_zsh_mac() {
+  brew install zsh
+}
+
+install_zsh_ubuntu() {
+  sudo apt install -y zsh
+}
+
+install_git_ubuntu() {
+  sudo apt install -y git-all
+}
+
 # Function to install required packages on Ubuntu
 install_packages_ubuntu() {
     sudo apt update
-    sudo apt install -y git-all zsh neovim ripgrep tmux bat fzf
+    sudo apt install -y git-all neovim ripgrep tmux bat fzf
     sudo apt install -y fonts-firacode
     npm install --global yarn
 }
@@ -34,6 +46,16 @@ setup_zsh() {
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     git clone https://gist.github.com/39eaf2933273a41fd72c971ffb76cfe1.git ~/.zshrc_temp
     cp ~/.zshrc_temp/.zshrc ~/.zshrc
+    echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo '[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm' >> ~/.zshrc
+        echo '[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion' >> ~/.zshrc
+        chsh -s $(which zsh)  # Set zsh as default shell on macOS
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> ~/.zshrc
+        echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> ~/.zshrc
+        sudo chsh -s $(which zsh) "$USER"  # Set zsh as default shell on Linux
+    fi
     rm -rf ~/.zshrc_temp
 }
 
@@ -51,13 +73,6 @@ install_rust() {
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 
-# Function to install Node.js via nvm
-install_node() {
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-    nvm install --lts
-    nvm use --lts
-}
-
 # Function to install additional tools
 install_additional_tools() {
     cargo install exa
@@ -68,20 +83,21 @@ case "$(uname -s)" in
     Darwin*)
         ask_password
         install_brew_mac
-        install_packages_mac
+        install_zsh_mac
         setup_zsh
+        install_packages_mac
         setup_configs
         install_rust
-        install_node
         install_additional_tools
         ;;
     Linux*)
         ask_password
-        install_packages_ubuntu
+        install_zsh_ubuntu
+        install_git_ubuntu
         setup_zsh
+        install_packages_ubuntu
         setup_configs
         install_rust
-        install_node
         install_additional_tools
         ;;
     *)
