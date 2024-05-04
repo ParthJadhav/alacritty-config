@@ -26,10 +26,10 @@ install_git_ubuntu() {
 }
 
 install install_neovim_ubuntu() {
-  sudo apt-get install software-properties-common
-  sudo add-apt-repository ppa:neovim-ppa/unstable
-  sudo apt-get update
-  sudo apt-get install neovim
+  sudo apt-get install software-properties-common -y
+  sudo add-apt-repository ppa:neovim-ppa/unstable -y
+  sudo apt-get update -y
+  sudo apt-get install neovim -y
 }
 
 # Function to install required packages on Ubuntu
