@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Function to ask for password and use it throughout the script
-ask_password() {
-    echo "Please enter your password:"
-    read PASSWORD
-    export PASSWORD
-}
-
 # Function to install Homebrew on macOS
 install_brew_mac() {
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -32,10 +25,17 @@ install_git_ubuntu() {
   sudo apt install -y git-all
 }
 
+install install_neovim_ubuntu() {
+  sudo apt-get install software-properties-common
+  sudo add-apt-repository ppa:neovim-ppa/unstable
+  sudo apt-get update
+  sudo apt-get install neovim
+}
+
 # Function to install required packages on Ubuntu
 install_packages_ubuntu() {
     sudo apt update
-    sudo apt install -y git-all neovim ripgrep tmux bat fzf
+    sudo apt install -y git-all ripgrep tmux bat fzf
     sudo apt install -y fonts-firacode
     npm install --global yarn
 }
@@ -81,7 +81,6 @@ install_additional_tools() {
 # Check OS and execute appropriate functions
 case "$(uname -s)" in
     Darwin*)
-        ask_password
         install_brew_mac
         install_zsh_mac
         setup_zsh
@@ -91,11 +90,11 @@ case "$(uname -s)" in
         install_additional_tools
         ;;
     Linux*)
-        ask_password
         install_zsh_ubuntu
         install_git_ubuntu
         setup_zsh
         install_packages_ubuntu
+        install_neovim_ubuntu
         setup_configs
         install_rust
         install_additional_tools
