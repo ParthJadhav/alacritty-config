@@ -25,7 +25,7 @@ install_git_ubuntu() {
   sudo apt install -y git-all
 }
 
-install install_neovim_ubuntu() {
+install_neovim_ubuntu() {
   sudo apt-get install software-properties-common -y
   sudo add-apt-repository ppa:neovim-ppa/unstable -y
   sudo apt-get update -y
